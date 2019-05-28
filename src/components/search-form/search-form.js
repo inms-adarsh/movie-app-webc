@@ -61,19 +61,24 @@ class SearchForm extends HTMLElement {
   connectedCallback() {
     const shadowRoot = this.attachShadow({ mode: 'open' });
     shadowRoot.innerHTML = template;
+    this.setUpSearch();    
+  }
 
-    const searchInput = this.shadowRoot.querySelectorAll('input')[0];
-
+  setUpSearch() {    
     this.shadowRoot.querySelector('form').addEventListener('submit', (ev) => {
       ev.preventDefault();
-
-      this.dispatchEvent(new CustomEvent('search', {
-        detail: {
-          searchTerm: searchInput.value
-        }
-      }));
-      return false;
+      this.dispatchSearchEvent();
     });
+  }
+
+  dispatchSearchEvent() {    
+    const searchInput = this.shadowRoot.querySelectorAll('input')[0];
+    this.dispatchEvent(new CustomEvent('search', {
+      detail: {
+        searchTerm: searchInput.value
+      }
+    }));
+    return false;
   }
 }
 

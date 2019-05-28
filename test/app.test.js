@@ -4,8 +4,9 @@ import {
     expect,
 } from '@open-wc/testing';
 
-import '../src/components/App.js';
 import sinon from 'sinon';
+
+import '../src/components/App.js';
 import MovieService from '../src/services/moviesApi.js';
 
 let el,
@@ -20,6 +21,11 @@ describe('<app-component>', () => {
     afterEach(() => {
         sinon.restore();
     })
+
+    it('has a search form', () => {
+        const searchForm = el.shadowRoot.querySelectorAll('search-form');
+        expect(searchForm.length).to.equal(1);
+    });
     it('has a default page number', () => {
         expect(el.state.currentPageNumber).to.equal(1);
     });
