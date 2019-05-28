@@ -3,41 +3,47 @@ import MovieService from '../services/moviesApi.js';
 import './search-form/search-form.js';
 import './movie-card/movie-card.js';
 
+const template = `
+    <style>
+        :host([hidden]) { display: none }
+        .container {
+            margin: 0 auto;
+            max-width: 1140px;
+            padding: 0 15px;
+        }
+        #main {
+            grid-template-columns: 3fr 3fr 3fr;
+            grid-column-gap: 30px;
+            padding-bottom: 18px;
+            padding-top: 6px;
+            display: grid;
+            width: 100%;
+        }
+        @media screen and (max-width: 600px) {
+            #main { grid-template-columns: 1fr; }
+        }
+    </style>
+
+    <main class="container">
+        <search-form></search-form>
+        <div id="main"></div>
+    </main>
+`;
 export class AppComponent extends HTMLElement {
     constructor() {
         super();
     }
 
     connectedCallback() {
-        this.currentPageNumber = 1;
-        this.currentSearchTerm = '';
+        this.state = {
+            currentPageNumber: 1,
+            currentSearchTerm: '',
+            lastPage: false
+        }
         
         const shadowRoot = this.attachShadow({mode: 'open'});
 
-        shadowRoot.innerHTML = `
-        <style>
-            .container {
-                margin: 0 auto;
-                max-width: 1140px;
-                padding: 0 15px;
-            }
-            #main {
-                grid-template-columns: 3fr 3fr 3fr;
-                grid-column-gap: 30px;
-                padding-bottom: 18px;
-                padding-top: 6px;
-                display: grid;
-                width: 100%;
-            }
-            @media screen and (max-width: 600px) {
-                #main { grid-template-columns: 1fr; }
-            }
-        </style>
-
-        <main class="container">
-            <search-form></search-form>
-            <div id="main"></div>
-        </main>`;
+        shadowRoot.innerHTML = template;
 
         this.getMovies();
         this.setUpSearch();
@@ -55,9 +61,9 @@ export class AppComponent extends HTMLElement {
      */
     loadMoreMovies() {
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-            if (!this.lastPage) {
-                this.currentPageNumber = this.currentPageNumber + 1;
-                this.getMovies(this.currentSearchTerm, this.currentPageNumber);
+            if (!this.state.lastPage) {
+                this.state.currentPageNumber = this.state.currentPageNumber + 1;
+                this.getMovies(this.state.currentSearchTerm, this.state.currentPageNumber);
             }
         }
     }
@@ -91,9 +97,9 @@ export class AppComponent extends HTMLElement {
      */
     loadMovies(searchResult) {
         if (searchResult.total_pages === searchResult.page) {
-            this.lastPage = true;
+            this.state.lastPage = true;
         } else {
-            this.lastPage = false;
+            this.state.lastPage = false;
         }
         
         this.update(searchResult.results);
@@ -118,11 +124,13 @@ export class AppComponent extends HTMLElement {
      * @param {*} searchTerm 
      */
     searchMovies(searchTerm) {
-        this.currentSearchTerm = searchTerm;
-        this.currentPageNumber = 1;
+        this.state = {
+            ...this.state,
+            currentSearchTerm: searchTerm,
+            currentPageNumber: 1
+        };
 
-        this.update([]);
-    
+        this.update([]);    
         this.getMovies(searchTerm);
     }
   
