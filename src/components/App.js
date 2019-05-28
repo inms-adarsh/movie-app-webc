@@ -92,12 +92,11 @@ export class AppComponent extends HTMLElement {
     loadMovies(searchResult) {
         if (searchResult.total_pages === searchResult.page) {
             this.lastPage = true;
-            return;
         } else {
             this.lastPage = false;
-            this.update(searchResult.results);
         }
-    
+        
+        this.update(searchResult.results);
     }
 
     update(movies) {

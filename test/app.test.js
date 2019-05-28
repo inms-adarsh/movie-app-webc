@@ -6,14 +6,7 @@ import {
 
 import '../src/components/App.js';
 import sinon from 'sinon';
-
-var MovieService = {
-   async search(searchTerm, pageNumber=1) {
-        const res = await fetch(movieServiceUrl(searchTerm, pageNumber)),
-        json = await res.json();
-        return json;
-    }
-};
+import MovieService from '../src/services/moviesApi.js'
 
 let el,
     main;
@@ -125,8 +118,10 @@ describe('<app-component>', () => {
     });
 
     it('should call get movies', async() => {
+
+        let movieService = new MovieService();
         const loadSpy = sinon.spy(el, 'loadMovies');    
-        const movieServiceSpy = sinon.spy(MovieService, 'search')     
+        const movieServiceSpy = sinon.spy(movieService, 'search')     
         el.getMovies();
         expect(movieServiceSpy.called).to.equal(true);
         expect(loadSpy.called).to.equal(true);
