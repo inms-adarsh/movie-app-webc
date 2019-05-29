@@ -1,4 +1,4 @@
-import MovieService from '../services/moviesApi.js';
+import MovieService from '../services/movies.service.js';
 
 import './search-form/search-form.js';
 import './movie-card/movie-card.js';
@@ -19,6 +19,15 @@ const template = `
             display: grid;
             width: 100%;
         }
+
+        #no-movies {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .hide {
+            display: none !important;
+        }
         @media screen and (max-width: 600px) {
             #main { grid-template-columns: 1fr; }
         }
@@ -27,6 +36,7 @@ const template = `
     <main class="container">
         <search-form></search-form>
         <div id="main"></div>
+        <div id="no-movies" class="hide">No Movies. Please Search again</div>
     </main>
 `;
 export class AppComponent extends HTMLElement {
@@ -105,13 +115,19 @@ export class AppComponent extends HTMLElement {
         this.update(searchResult.results);
     }
 
+    /**
+     * Update Screen with new movies
+     * @param {*} movies 
+     */
     update(movies) {
         const main = this.shadowRoot.querySelector('#main');
         if(movies.length === 0) {
             while (main.firstChild) main.removeChild(main.firstChild);
+            this.shadowRoot.querySelector('#no-movies').classList.remove('hide');
             return;
         }
         movies.forEach(movie => {
+            this.shadowRoot.querySelector('#no-movies').classList.add('hide');
             const el = document.createElement('movie-card');
             el.movie = movie;
             main.appendChild(el);
@@ -130,10 +146,17 @@ export class AppComponent extends HTMLElement {
             currentPageNumber: 1
         };
 
-        this.update([]);    
+        this.clearMovies();    
         this.getMovies(searchTerm);
     }
-  
+    
+    /**
+     * Clear Movies
+     */
+    clearMovies() {
+        const main = this.shadowRoot.querySelector('#main');     
+        while (main.firstChild) main.removeChild(main.firstChild);
+    }
 }
 
 customElements.define('app-component', AppComponent);

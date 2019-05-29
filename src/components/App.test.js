@@ -6,8 +6,8 @@ import {
 
 import sinon from 'sinon';
 
-import './App.js';
-import MovieService from '../services/moviesApi.js';
+import './app.js';
+import MovieService from '../services/movies.service.js';
 
 let el,
     main;
@@ -35,13 +35,25 @@ describe('<app-component>', () => {
     });
 
     it('should call searchMovies', () => {
-        const updateSpy = sinon.spy(el, 'update');
+        const clearSpy = sinon.spy(el, 'clearMovies');
         const movieSpy = sinon.spy(el, 'getMovies');
         el.searchMovies('Dracula');
         expect(el.state.currentSearchTerm).to.equal('Dracula');
         expect(el.state.currentPageNumber).to.equal(1);
         expect(movieSpy.callCount).to.equal(1);
-        expect(updateSpy.callCount).to.equal(1);
+        expect(clearSpy.callCount).to.equal(1);
+    })
+
+    it('should not show any movies', () => {
+        const noMovielement = el.shadowRoot.querySelector('#no-movies');
+        el.update([]);
+        expect(main.childNodes.length).to.equal(0);
+        expect(noMovielement.classList.contains('hide')).to.equal(false);
+    })
+
+    it('should clear movies', () => {
+        el.clearMovies();
+        expect(main.childNodes.length).to.equal(0);
     })
 
     it('should call update with list of movies', () => {
@@ -54,12 +66,9 @@ describe('<app-component>', () => {
 
         el.update(movies);
         const movieCardElements = main.querySelectorAll('movie-card');
+        const noMovielement = el.shadowRoot.querySelector('#no-movies');
         expect(movieCardElements.length).to.equal(4);
-    })
-
-    it('should clear movies', () => {
-        el.update([]);
-        expect(main.childNodes.length).to.equal(0);
+        expect(noMovielement.classList.contains('hide')).to.equal(true);
     })
 
     it('should clear movies', () => {
@@ -124,7 +133,6 @@ describe('<app-component>', () => {
     });
 
     it('should call get movies', async() => {
-        const loadSpy = sinon.spy(el, 'loadMovies');   
         let movieService = new MovieService();        
         const serviceStub = sinon.stub(movieService, 'search').resolves({ "page": 1, "total_results": 219, "total_pages": 1, "results": [{ "vote_count": 2250, "id": 6114, "video": false, "vote_average": 7.3, "title": "Dracula", "popularity": 12.734, "poster_path": "\/ioHxm3D3JdSXR61LRhcVb8KdZOz.jpg", "original_language": "en", "original_title": "Dracula", "genre_ids": [10749, 27], "backdrop_path": "\/x4RwLFKvVm5X6zkrKRLBUkDIwuq.jpg", "adult": false, "overview": "When Dracula leaves the captive Jonathan Harker and Transylvania for London in search of Mina Harker—the spitting image of Dracula's long-dead wife, Elisabeta—obsessed vampire hunter, Dr. Van Helsing sets out to end the madness.", "release_date": "1992-11-13" }] }) 
         el.getMovies();

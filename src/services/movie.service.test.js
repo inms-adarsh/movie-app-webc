@@ -4,7 +4,7 @@ import {
     expect,
   } from '@open-wc/testing';
 
-import MovieService from './moviesApi';
+import MovieService from './movies.service';
 
 import sinon from 'sinon';
 

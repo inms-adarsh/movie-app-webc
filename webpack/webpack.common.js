@@ -2,7 +2,7 @@ const Path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const WorkboxPlugin = require('workbox-webpack-plugin');
 module.exports = {
   entry: {
     app: Path.resolve(__dirname, '../src/index.js')
@@ -24,7 +24,12 @@ module.exports = {
     ]),
     new HtmlWebpackPlugin({
       template: Path.resolve(__dirname, '../src/index.html'),
-      inject: true
+      inject: true,
+      title: 'Movies App'
+    }),
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true
     })
   ],
   resolve: {
