@@ -6,8 +6,8 @@ import {
 
 import sinon from 'sinon';
 
-import '../src/components/App.js';
-import MovieService from '../src/services/moviesApi.js';
+import './App.js';
+import MovieService from '../services/moviesApi.js';
 
 let el,
     main;
@@ -124,10 +124,11 @@ describe('<app-component>', () => {
     });
 
     it('should call get movies', async() => {
-        const loadSpy = sinon.spy(el, 'loadMovies');    
-        let movieService = new MovieService();
+        const loadSpy = sinon.spy(el, 'loadMovies');   
+        let movieService = new MovieService();        
+        const serviceStub = sinon.stub(movieService, 'search').resolves({ "page": 1, "total_results": 219, "total_pages": 1, "results": [{ "vote_count": 2250, "id": 6114, "video": false, "vote_average": 7.3, "title": "Dracula", "popularity": 12.734, "poster_path": "\/ioHxm3D3JdSXR61LRhcVb8KdZOz.jpg", "original_language": "en", "original_title": "Dracula", "genre_ids": [10749, 27], "backdrop_path": "\/x4RwLFKvVm5X6zkrKRLBUkDIwuq.jpg", "adult": false, "overview": "When Dracula leaves the captive Jonathan Harker and Transylvania for London in search of Mina Harker—the spitting image of Dracula's long-dead wife, Elisabeta—obsessed vampire hunter, Dr. Van Helsing sets out to end the madness.", "release_date": "1992-11-13" }] }) 
         el.getMovies();
         await movieService.search('Dracula', 1);
-        expect(loadSpy.called).to.equal(true);
+        expect(serviceStub.calledWith('Dracula')).to.equal(true);
     });
 });

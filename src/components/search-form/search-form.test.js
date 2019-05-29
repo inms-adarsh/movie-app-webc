@@ -5,7 +5,7 @@ import {
 } from '@open-wc/testing';
 
 import sinon from 'sinon';
-import '../src/components/search-form/search-form.js';
+import './search-form.js';
 
 let el;
 describe('<search-form>', async () => {
@@ -40,13 +40,12 @@ describe('<search-form>', async () => {
     const formSubmitSpy = sinon.spy(form, 'addEventListener');
     el.setUpSearch();
     expect(formSubmitSpy.calledWith('submit')).to.equal(true);
-
   });
 
-  it('should dispatch event', () => {   
-    el.addEventListener('search', () => {});
-    const formSubmitSpy = sinon.spy(el, 'addEventListener');
+  it('should dispatch event', async () => { 
+    const eventspy = sinon.spy()  
+    el.addEventListener('search', eventspy);
     el.dispatchSearchEvent();
-    expect(formSubmitSpy.calledWith('search')).to.equal(true);
+    expect(eventspy.called).to.equal(true);
   })
 });

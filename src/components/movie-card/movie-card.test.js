@@ -4,7 +4,7 @@ import {
   expect,
 } from '@open-wc/testing';
 
-import '../src/components/movie-card/movie-card.js';
+import './movie-card.js';
 
 const MOVIE_INPUT = {
   adult: false,
